@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
-from core.models import KYC, Account, Position, Rank
+from core.models import KYC, Account, Position
 
 
 class KYCForm(forms.ModelForm):

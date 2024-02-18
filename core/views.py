@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.shortcuts import redirect, render
-
+from django.contrib.auth import login
 from core.forms import CustomerRegistrationForm
 
 from .forms import AccountForm, ContactForm, EditProfileForm, KYCForm, TransferForm
