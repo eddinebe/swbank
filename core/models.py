@@ -7,7 +7,7 @@ class Rank(models.Model):
     value = models.IntegerField(unique=True, db_index=True)
 
     def __str__(self):
-        return f"{self.value}:{self.name}"
+        return f"{self.name}"
 
 
 class Position(models.Model):
@@ -15,27 +15,25 @@ class Position(models.Model):
     value = models.IntegerField(unique=True, db_index=True)
 
     def __str__(self):
-        return f"{self.value}:{self.name}"
+        return f"{self.name}"
 
 
 class Customer(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.PROTECT)
-    rank = models.ForeignKey(Rank, default=2, on_delete=models.PROTECT)
+    rank = models.ForeignKey(Rank, default=1, on_delete=models.PROTECT)
     phone = models.CharField(max_length=35, db_index=True)
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
-
     def __str__(self):
-        return f"{self.rank}"
+        return f"{self.user.first_name} {self.user.last_name}"
 
 
 class Staff(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.PROTECT)
-    position = models.ForeignKey(Position, default=2, on_delete=models.PROTECT)
+    position = models.ForeignKey(Position, default=1, on_delete=models.PROTECT)
+    phone = models.CharField(max_length=35, db_index=True)
 
     def __str__(self):
-        return f"{self.position}"
+        return f"{self.user.first_name} {self.user.last_name} - {self.position.name}"
 
 
 class KYC(models.Model):
@@ -48,6 +46,9 @@ class Account(models.Model):
     name = models.CharField(max_length=50, db_index=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def __str__(self):
+        return self.name
+
 
 class Ledger(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -55,28 +56,5 @@ class Ledger(models.Model):
     description = models.CharField(max_length=255)
     date = models.DateTimeField(auto_now_add=True)
 
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import LoanForm
-
-
-@login_required
-def loan_application(request):
-    customer = (
-        request.user.customer
-    )  # Assuming all users have a corresponding Customer profile
-
-    # Check if the user's rank is silver or gold
-    if customer.rank.name in ["silver", "gold"]:
-        if request.method == "POST":
-            form = LoanForm(request.POST)
-            if form.is_valid():
-                # Process the form data
-                # Assuming you save the form data and redirect the user to a success page
-                return redirect("loan_success")
-        else:
-            form = LoanForm()
-        return render(request, "loan_application.html", {"form": form})
-    else:
-        return redirect("test")  # Redirecting to test.html
+    def __str__(self):
+        return f"Account: {self.account}, Amount: {self.amount}, Description: {self.description}, Date: {self.date}"

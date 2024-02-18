@@ -1,38 +1,27 @@
-from core.forms import CustomerRegistrationForm
-from django.shortcuts import render, redirect
-from .forms import KYCForm, ContactForm, EditProfileForm, TransferForm, AccountForm
-from .models import Customer, Rank, Account, Ledger
+from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.db import transaction
+from django.shortcuts import redirect, render
+
+from core.forms import CustomerRegistrationForm
+
+from .forms import AccountForm, ContactForm, EditProfileForm, KYCForm, TransferForm
+from .models import Account, Customer, Ledger, Rank
 
 
 def index(request):
     return render(request, "core/index.html")
 
 
-def about(request):
-    return render(request, "core/about.html")
-
-
 def products(request):
     return render(request, "core/products.html")
 
 
-def settings(request):
-    return render(request, "core/settings.html")
+def about_us(request):
+    return render(request, "core/about_us.html")
 
 
-def dashboard(request):
-    return render(request, "core/dashboard.html")
-
-
-def account_customer(request):
-    accounts = Account.objects.all()
-    context = {"accounts": accounts}
-    return render(request, "core/account_customer.html", context)
-
-
-def contact(request):
+def contact_us(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -49,24 +38,10 @@ def contact(request):
                 reply_to=[email],  # Email from the form to get back to
             ).send()
 
-            return redirect("core:contact")
+            return redirect("core:contact_us")
     else:
         form = ContactForm()
-    return render(request, "core/contact.html", {"form": form})
-
-
-def edit_profile(request):
-    if request.method == "POST":
-        form = EditProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect("core:dashboard")
-    else:
-        form = EditProfileForm(instance=request.user)
-
-    return render(
-        request, "core/edit_profile.html", {"user": request.user, "form": form}
-    )
+    return render(request, "core/contact_us.html", {"form": form})
 
 
 def register(request):
@@ -93,7 +68,9 @@ def register(request):
             kyc_form.instance.poa_image = kyc_form.cleaned_data["poa_image"]
             kyc_form.save()
 
-            return redirect("core:register")
+            login(request, user)
+
+            return redirect("core:dashboard")
 
     else:
         user_form = CustomerRegistrationForm()
@@ -106,26 +83,24 @@ def register(request):
     )
 
 
-def make_account(request):
-    if request.method == "POST":
-        form = AccountForm(request.POST)
-        if form.is_valid():
-            # Get the current user
-            user = request.user
-            name = form.cleaned_data["name"]
-            # Create a new instance of the Account model with form data and user
-            new_account = Account(name=name, user=user)
-            # Save the new account to the database
-            new_account.save()
-            # Optionally, redirect the user to a success page or perform other actions
-            return redirect("core:dashboard")
-    else:
-        form = AccountForm()
-    return render(request, "core/account_create.html", {"form": form})
+@login_required
+def dashboard(request):
+    user = request.user
+
+    # Retrieve the latest transfers associated with the user's accounts
+    latest_transfers = Ledger.objects.filter(account__user=user).order_by("-date")[:10]
+
+    context = {
+        "user": user,
+        "latest_transfers": latest_transfers,
+    }
+
+    return render(request, "core/dashboard.html", context)
 
 
+@login_required
 @transaction.atomic
-def make_transfer(request):
+def create_transfer(request):
     if request.method == "POST":
         form = TransferForm(request.POST)
         if form.is_valid():
@@ -155,3 +130,51 @@ def make_transfer(request):
     else:
         form = TransferForm()
     return render(request, "core/account_transfer.html", {"form": form})
+
+
+@login_required
+def create_account(request):
+    if request.method == "POST":
+        form = AccountForm(request.POST)
+        if form.is_valid():
+            # Get the current user
+            user = request.user
+            name = form.cleaned_data["name"]
+            # Create a new instance of the Account model with form data and user
+            new_account = Account(name=name, user=user)
+            # Save the new account to the database
+            new_account.save()
+            # Optionally, redirect the user to a success page or perform other actions
+            return redirect("core:account_transfer")
+    else:
+        form = AccountForm()
+    return render(request, "core/account_transfer.html", {"form": form})
+
+
+@login_required
+def account_customer(request):
+    # Retrieve accounts associated with the logged-in user
+    user = request.user
+    accounts = Account.objects.filter(user=user)
+    context = {"accounts": accounts}
+    return render(request, "core/account_customer.html", context)
+
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("core:edit_profile")
+    else:
+        form = EditProfileForm(instance=request.user)
+
+    return render(
+        request, "core/edit_profile.html", {"user": request.user, "form": form}
+    )
+
+
+@login_required
+def settings(request):
+    return render(request, "core/settings.html")

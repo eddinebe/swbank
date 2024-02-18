@@ -1,9 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserChangeForm
-from core.models import Rank, KYC, Account, Position
 from django.core.validators import EmailValidator
+
+from core.models import KYC, Account, Position, Rank
 
 
 class KYCForm(forms.ModelForm):
@@ -12,25 +12,7 @@ class KYCForm(forms.ModelForm):
         fields = ["poi_image", "poa_image"]
 
 
-class AccountForm(forms.ModelForm):
-    class Meta:
-        model = Account
-        fields = ["name"]
-
-
-class LoanForm(forms.ModelForm):
-    amount = forms.DecimalField(max_digits=10, decimal_places=2)
-    loan_type = forms.ChoiceField(
-        choices=[("personal", "Personal Loan"), ("business", "Business Loan")]
-    )
-
-    class Meta:
-        model = Account
-        fields = []  # Since you want to include additional fields, leave this empty
-
-
 class CustomerRegistrationForm(UserCreationForm):
-    rank = forms.ModelChoiceField(queryset=Rank.objects.all(), initial=2)
     phone_number = forms.CharField(max_length=20, required=True)
     kyc_form = KYCForm()
 
@@ -69,10 +51,21 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 
-class EditProfileForm(UserChangeForm):
+class AccountForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ["username", "email", "first_name", "last_name"]
+        model = Account
+        fields = ["name"]
+
+
+class LoanForm(forms.ModelForm):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2)
+    loan_type = forms.ChoiceField(
+        choices=[("personal", "Personal Loan"), ("business", "Business Loan")]
+    )
+
+    class Meta:
+        model = Account
+        fields = []  # Since you want to include additional fields, leave this empty
 
 
 class TransferForm(forms.Form):
@@ -84,3 +77,9 @@ class TransferForm(forms.Form):
     )
     amount = forms.DecimalField(label="Amount")
     description = forms.CharField(label="Description", max_length=255)
+
+
+class EditProfileForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ["username", "email", "first_name", "last_name"]
