@@ -1,0 +1,17 @@
+{% extends "partials/base.html" %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block content %}
+    <h1>User Profile</h1>
+    <hr>
+
+    <p><strong>First name:</strong> {{ user.first_name }}</p>
+    <p><strong>Last name:</strong> {{ user.last_name }}</p>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+{% endblock %}
+
