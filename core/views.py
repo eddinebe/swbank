@@ -6,7 +6,7 @@ from django.contrib.auth import login
 from core.forms import CustomerRegistrationForm
 
 from .forms import AccountForm, ContactForm, EditProfileForm, KYCForm, TransferForm
-from .models import Account, Customer, Ledger, Rank
+from .models import Account, Customer, Ledger
 
 
 def index(request):
@@ -54,10 +54,9 @@ def register(request):
 
         if user_form.is_valid() and kyc_form.is_valid():
             user = user_form.save()
-            rank = Rank.objects.get(pk=request.POST["rank"])
             phone_number = request.POST["phone_number"]
 
-            customer = Customer.objects.create(user=user, rank=rank, phone=phone_number)
+            customer = Customer.objects.create(user=user, phone=phone_number)
             account = Account.objects.create(user=user, name="main")
 
             # Save KYCForm with the associated Customer
