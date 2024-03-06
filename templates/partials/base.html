@@ -23,19 +23,27 @@
     <nav>
       <ul>
         {% if user.is_authenticated %}
-        <li><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
-        <li><a href="{% url 'core:products' %}">Products</a></li>
-        <li><a href="{% url 'core:about_us' %}">About Us</a></li>
-        <li><a href="{% url 'core:contact_us' %}">Contact Us</a></li>
-        <li><a href="{% url 'core:account_transfer' %}">Transfer Funds</a></li>
-        <li><a href="{% url 'core:account_create' %}">Open Account</a></li>
-        <li><a href="{% url 'core:account_customer' %}">My Accounts</a></li>
+            {% if user.is_staff %}
+                <li><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'core:account_staff' %}">All Accounts</a></li>
+                <li><a href="{% url 'core:customer_staff' %}">All Customers</a></li>
+                <li><a href="{% url 'core:register' %}">Register Customer</a></li>
+                <li><a href="{% url 'core:account_create_staff' %}">Register Account</a></li>
+            {% else %}
+                <li><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'core:products' %}">Products</a></li>
+                <li><a href="{% url 'core:about_us' %}">About Us</a></li>
+                <li><a href="{% url 'core:contact_us' %}">Contact Us</a></li>
+                <li><a href="{% url 'core:account_transfer' %}">Transfer Funds</a></li>
+                <li><a href="{% url 'core:account_create' %}">Open Account</a></li>
+                <li><a href="{% url 'core:account_customer' %}">My Accounts</a></li>
+            {% endif %}
         {% else %}
-        <li><a href="{% url 'index' %}">Home</a></li>
-        <li><a href="{% url 'core:products' %}">Products</a></li>
-        <li><a href="{% url 'core:about_us' %}">About Us</a></li>
-        <li><a href="{% url 'core:contact_us' %}">Contact Us</a></li>
-        <li><a href="{% url 'core:register' %}">Register</a></li>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'core:products' %}">Products</a></li>
+            <li><a href="{% url 'core:about_us' %}">About Us</a></li>
+            <li><a href="{% url 'core:contact_us' %}">Contact Us</a></li>
+            <li><a href="{% url 'core:register' %}">Register</a></li>
         {% endif %}
         <li>
           <span>Client Portal</span>

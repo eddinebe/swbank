@@ -1,0 +1,18 @@
+{% extends "partials/base.html" %}
+{% block title %} Create Account {% endblock %}
+{% block content %}
+<h1>Create Account</h1>
+<p>
+  Welcome to our Create Account page. Please fill out the form below to open
+  your new account with us.
+</p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <!-- Add user field -->
+  <input type="hidden" name="user" value="{{ user.id }}">
+  <!-- End of user field -->
+  <button type="submit">Submit</button>
+</form>
+{% endblock %}
+

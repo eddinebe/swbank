@@ -9,16 +9,18 @@ from .forms import AccountForm, ContactForm, EditProfileForm, KYCForm, TransferF
 from .models import Account, Customer, Ledger
 
 
+# Main
+
 def index(request):
-    return render(request, "core/index.html")
+    return render(request, "core/main/index.html")
 
 
 def products(request):
-    return render(request, "core/products.html")
+    return render(request, "core/main/main_products.html")
 
 
 def about_us(request):
-    return render(request, "core/about_us.html")
+    return render(request, "core/main/main_about_us.html")
 
 
 def contact_us(request):
@@ -38,15 +40,13 @@ def contact_us(request):
                 reply_to=[email],  # Email from the form to get back to
             ).send()
 
-            return redirect("core:contact_us")
+            return redirect("core/main/main_contact_us.html")
     else:
         form = ContactForm()
-    return render(request, "core/contact_us.html", {"form": form})
+    return render(request, "core/main/main_contact_us.html", {"form": form})
 
 
 def register(request):
-    if request.user.is_authenticated:
-        return redirect("core:dashboard")
 
     if request.method == "POST":
         user_form = CustomerRegistrationForm(request.POST)
@@ -69,7 +69,7 @@ def register(request):
 
             login(request, user)
 
-            return redirect("core:dashboard")
+            return redirect("registration:register.html")
 
     else:
         user_form = CustomerRegistrationForm()
@@ -144,10 +144,10 @@ def create_account(request):
             # Save the new account to the database
             new_account.save()
             # Optionally, redirect the user to a success page or perform other actions
-            return redirect("core:account_transfer")
+            return redirect("core:account_create")
     else:
         form = AccountForm()
-    return render(request, "core/account_transfer.html", {"form": form})
+    return render(request, "core/account_create.html", {"form": form})
 
 
 @login_required
@@ -177,3 +177,21 @@ def edit_profile(request):
 @login_required
 def settings(request):
     return render(request, "core/settings.html")
+
+
+# STAFF:
+
+
+@login_required
+def account_staff(request):
+    accounts = Account.objects.all()
+    context = {"accounts": accounts}
+    return render(request, "core/account_staff.html", context)
+
+
+@login_required
+def customer_staff(request):
+    # Retrieve all accounts in the system
+    customers = Customer.objects.all()
+    context = {"customers": customers}
+    return render(request, "core/customer_staff.html", context)
