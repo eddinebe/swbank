@@ -12,7 +12,7 @@ class KYCForm(forms.ModelForm):
         fields = ["poi_image", "poa_image"]
 
 
-class CustomerRegistrationForm(UserCreationForm):
+class ClientRegistrationForm(UserCreationForm):
     phone_number = forms.CharField(max_length=20, required=True)
     kyc_form = KYCForm()
 

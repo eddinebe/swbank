@@ -12,6 +12,7 @@ urlpatterns = [
     path("main_about_us/", views.main_about_us, name="main_about_us"),
     path("main_contact_us/", views.main_contact_us, name="main_contact_us"),
     # Staff
+    path("staff_dashboard/", views.staff_dashboard, name="staff_dashboard"),
     path(
         "staff_create_account/",
         views.client_create_account,

@@ -4,6 +4,14 @@ from django.core.mail import EmailMessage
 from django.db import transaction
 from django.shortcuts import redirect, render
 
+from .forms import (
+    ClientRegistrationForm,
+    AccountForm,
+    ContactForm,
+    EditProfileForm,
+    KYCForm,
+    TransferForm,
+)
 from .models import Account, Customer, Ledger
 
 
@@ -47,18 +55,33 @@ def main_contact_us(request):
 
 
 @login_required
+def staff_dashboard(request):
+    user = request.user
+
+    # Retrieve the latest transfers associated with the user's accounts
+    latest_transfers = Ledger.objects.filter(account__user=user).order_by("-date")[:10]
+
+    context = {
+        "user": user,
+        "latest_transfers": latest_transfers,
+    }
+
+    return render(request, "core/client/client_dashboard.html", context)
+
+
+@login_required
 def staff_view_clients(request):
     # Retrieve all accounts in the system
     customers = Customer.objects.all()
     context = {"customers": customers}
-    return render(request, "core/client/staff_view_clients.html", context)
+    return render(request, "core/staff/staff_view_clients.html", context)
 
 
 @login_required
 def staff_view_accounts(request):
     accounts = Account.objects.all()
     context = {"accounts": accounts}
-    return render(request, "core/account_staff.html", context)
+    return render(request, "core/staff/staff_view_accounts.html", context)
 
 
 # Client
@@ -105,7 +128,7 @@ def client_view_accounts(request):
     user = request.user
     accounts = Account.objects.filter(user=user)
     context = {"accounts": accounts}
-    return render(request, "core/client_view_accounts.html", context)
+    return render(request, "core/client/client_view_accounts.html", context)
 
 
 @login_required
@@ -167,7 +190,7 @@ def client_create_account(request):
 def register(request):
 
     if request.method == "POST":
-        user_form = CustomerRegistrationForm(request.POST)
+        user_form = ClientRegistrationForm(request.POST)
         kyc_form = KYCForm(request.POST, request.FILES)
 
         if user_form.is_valid() and kyc_form.is_valid():
@@ -187,10 +210,10 @@ def register(request):
 
             login(request, user)
 
-            return redirect("registration:register.html")
+            return redirect("core:client_dashboard")
 
     else:
-        user_form = CustomerRegistrationForm()
+        user_form = ClientRegistrationForm()
         kyc_form = KYCForm()
 
     return render(
