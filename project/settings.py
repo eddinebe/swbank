@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-_r)i=1rgqg+rr(=2$657&07-2z8wo(-r9cg+qwbsb!7iw2(=)$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['143.42.54.171', '127.0.0.1']
 
 
 # Application definition
@@ -38,9 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    # Security
     "csp",
-    # Apps
     "core",
     #'',
 ]
@@ -55,7 +53,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django_ratelimit.middleware.RatelimitMiddleware",
-    # "csp.middleware.CSPMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -152,27 +150,20 @@ REST_FRAMEWORK = {
 
 
 # Security
-RATETIME_RATELIMIT_KEY = "user"
+RATETIME_RATELIMIT_KEY = "ip"
 RATETIME_RATELIMIT_RATE = "5/m"
 RATETIME_RATELIMIT_BLOCK = True
+RATETIME_RATELIMIT_BLOCK_RETRY_AFTER = 60  # 60 seconds
+RATETIME_RATELIMIT_ERROR_MSG = "Rate limit exceeded. Please try again later."
 
-# CSP_DEFAULT_SRC = "'self'"
-# CSP_SCRIPT_SRC = "'self'"
-# CSP_STYLE_SRC = "'self' 'unsafe-inline'"
-# CSP_IMG_SRC = "'self'"
-# CSP_FONT_SRC = "'self'"
-# CSP_OBJECT_SRC = "'none'"
-# CSP_MEDIA_SRC = "'self'"
-# CSP_FRAME_SRC = "'self'"
-# CSP_CONNECT_SRC = "'self'"
+CSP_DEFAULT_SRC = ("'self'", "https://cdn.jsdelivr.net")
 
-# X_FRAME_OPTIONS = "DENY"
+X_FRAME_OPTIONS = "DENY"
 
-# PASSWORD_HASHERS = [
-# "django.contrib.auth.hashers.Argon2PasswordHasher",
-# "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-# ]
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+]
 
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_REFERRER_POLICY = "same-origin"
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
