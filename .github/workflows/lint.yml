@@ -30,7 +30,7 @@ jobs:
 
     - name: Lint code
       run: |
-        sudo black .
+        black .
         ruff check --fix .
         isort --profile black .
 
