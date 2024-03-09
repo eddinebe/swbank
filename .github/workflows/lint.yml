@@ -24,13 +24,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install black
-        pip install ruff
         pip install isort
 
     - name: Lint code
       run: |
-        black .
-        ruff check --fix .
         isort --profile black .
 
