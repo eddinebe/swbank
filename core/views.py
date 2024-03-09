@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.shortcuts import redirect, render
-
+import requests
 from .forms import (
     ClientRegistrationForm,
     AccountForm,
@@ -13,6 +13,62 @@ from .forms import (
     TransferForm,
 )
 from .models import Account, Customer, Ledger
+from rest_framework import viewsets
+from .serializers import AccountSerializer, CustomerSerializer, LedgerSerializer
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+
+# API
+class TransferViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def create(self, request):
+        form = TransferForm(request.POST)
+        if form.is_valid():
+            source_account = form.cleaned_data["source_account"]
+            destination_account = form.cleaned_data["destination_account"]
+            amount = form.cleaned_data["amount"]
+            description = form.cleaned_data["description"]
+
+            # Deduct amount from source account
+            source_account.balance -= amount
+            source_account.save()
+
+            # Add amount to destination account
+            destination_account.balance += amount
+            destination_account.save()
+
+            # Create ledger entries
+            Ledger.objects.create(
+                account=source_account, amount=-amount, description=description
+            )
+            Ledger.objects.create(
+                account=destination_account, amount=amount, description=description
+            )
+
+            # Redirect to dashboard or success page
+            return redirect("core:client_create_transfer")
+
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AccountViewSet(viewsets.ModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+
+class LedgerViewSet(viewsets.ModelViewSet):
+    queryset = Ledger.objects.all()
+    serializer_class = LedgerSerializer
 
 
 # Main
@@ -49,6 +105,24 @@ def main_contact_us(request):
     else:
         form = ContactForm()
     return render(request, "core/main/main_contact_us.html", {"form": form})
+
+
+def get_financial_news(api_key):
+    url = "https://newsapi.org/v2/top-headlines"
+    params = {"category": "business", "country": "us", "apiKey": api_key}
+    response = requests.get(url, params=params)
+    data = response.json()
+    return data["articles"]
+
+
+def main_news(request):
+    api_key = "bcc609512dc34af980770f41ac470a85"  # Replace with your actual API key
+    articles = get_financial_news(api_key)
+    return render(request, "core/main/main_news.html", {"articles": articles})
+
+
+def main_stocks(request):
+    return render(request, "core/main/main_stocks.html")
 
 
 # Staff
@@ -188,7 +262,11 @@ def client_create_account(request):
 
 
 def register(request):
-
+    if request.user.is_authenticated and not (
+        request.user.is_staff or request.user.is_superuser
+    ):
+        return redirect("core:client_dashboard")
+    # Proceed to registration form if user is not authenticated
     if request.method == "POST":
         user_form = ClientRegistrationForm(request.POST)
         kyc_form = KYCForm(request.POST, request.FILES)
@@ -196,21 +274,24 @@ def register(request):
         if user_form.is_valid() and kyc_form.is_valid():
             user = user_form.save()
             phone_number = request.POST["phone_number"]
-
             customer = Customer.objects.create(user=user, phone=phone_number)
             account = Account.objects.create(user=user, name="main")
 
-            # Save KYCForm with the associated Customer
             kyc_form.instance.customer = customer
-
-            # Access the images directly from the form's instance
             kyc_form.instance.poi_image = kyc_form.cleaned_data["poi_image"]
             kyc_form.instance.poa_image = kyc_form.cleaned_data["poa_image"]
             kyc_form.save()
 
             login(request, user)
 
-            return redirect("core:client_dashboard")
+            if request.user.is_staff or request.user.is_superuser:
+                return render(
+                    request,
+                    "registration/register.html",
+                    {"user_form": user_form, "kyc_form": kyc_form},
+                )
+            else:
+                return redirect("core:client_dashboard")
 
     else:
         user_form = ClientRegistrationForm()

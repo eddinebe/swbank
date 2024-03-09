@@ -134,13 +134,22 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = "/core/dashboard"
+LOGIN_REDIRECT_URL = "/core/register"
 LOGOUT_REDIRECT_URL = "/login"
 
 EMAIL_HOST = "sandbox.smtp.mailtrap.io"
 EMAIL_HOST_USER = "7aab06385605d3"
 EMAIL_HOST_PASSWORD = "190af831fa51b7"
 EMAIL_PORT = "2525"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        # Other authentication classes as needed
+    ],
+}
+
 
 # Security
 RATETIME_RATELIMIT_KEY = "user"

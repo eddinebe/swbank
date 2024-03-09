@@ -35,18 +35,18 @@
         <li><a href="{% url 'core:main_products' %}">Products</a></li>
         <li><a href="{% url 'core:main_about_us' %}">About Us</a></li>
         <li><a href="{% url 'core:main_contact_us' %}">Contact Us</a></li>
-        <li>
-          <a href="{% url 'core:client_create_transfer' %}">Transfer Funds</a>
-        </li>
+        <li><a href="{% url 'core:main_news' %}">News</a></li>
+        <li><a href="{% url 'core:main_stocks' %}">Stock Market</a></li>
+        <li><a href="{% url 'core:client_create_transfer' %}">Transfer Funds</a></li>
         <li><a href="{% url 'core:client_view_accounts' %}">My Accounts</a></li>
-        <li>
-          <a href="{% url 'core:client_create_account' %}">Open Account</a>
-        </li>
+        <li><a href="{% url 'core:client_create_account' %}">Open Account</a></li>
         {% endif %} {% else %}
         <li><a href="{% url 'index' %}">Home</a></li>
         <li><a href="{% url 'core:main_products' %}">Products</a></li>
         <li><a href="{% url 'core:main_about_us' %}">About Us</a></li>
         <li><a href="{% url 'core:main_contact_us' %}">Contact Us</a></li>
+        <li><a href="{% url 'core:main_news' %}">News</a></li>
+        <li><a href="{% url 'core:main_stocks' %}">Stock Market</a></li>
         <li><a href="{% url 'core:register' %}">Register</a></li>
         {% endif %}
         <li>
