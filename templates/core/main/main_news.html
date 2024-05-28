@@ -1,0 +1,22 @@
+{% extends "partials/base.html" %}
+
+{% block title %}
+  News
+{% endblock %}
+
+
+{% block content %}
+    <h1>Financial News</h1>
+    <ul>
+    {% for article in articles %}
+        <li>
+            <h2>{{ article.title }}</h2>
+            <p>{{ article.description }}</p>
+            <p>Source: {{ article.source.name }}</p>
+            <p>Published at: {{ article.publishedAt }}</p>
+            <a href="{{ article.url }}">Read more</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+

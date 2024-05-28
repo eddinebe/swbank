@@ -1,0 +1,16 @@
+{% extends "partials/base.html" %}
+{% block title %} Contact Us {% endblock %}
+{% block content %}
+<div>
+  <h1>Contact Us</h1>
+  <p>
+    Have a question or need assistance? Fill out the form below to get in touch
+    with us.
+  </p>
+  <hr />
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Submit</button>
+  </form>
+</div>
+{% endblock %}

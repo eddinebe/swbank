@@ -1,0 +1,12 @@
+{% extends 'partials/base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ user_form.kyc_form.as_p }}
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
+

@@ -1,0 +1,39 @@
+{% extends "partials/base.html" %}
+
+{% block title %}
+    All Customers
+{% endblock %}
+
+{% block content %}
+    <h1>All Customers</h1>
+    <p>Here are all the customers in the bank:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Accounts</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.user.get_full_name }}</td>
+                    <td>
+                        <ul>
+                            {% for account in customer.user.account_set.all %}
+                                <li>{{ account.name }} - Balance: ${{ account.balance }}</li>
+                            {% empty %}
+                                <li>No accounts</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No customers found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

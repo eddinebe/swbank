@@ -1,0 +1,54 @@
+{% extends "partials/base.html" %}
+{% block title %} Products {% endblock %}
+{%block content %}
+<h1>Products</h1>
+<hr />
+
+<section>
+  <h2>Our Loan Products</h2>
+
+  <article>
+    <h3>Home Loans</h3>
+    <p>
+      Secure your dream home with our competitive home loan options. Whether you
+      are a first-time buyer or looking to refinance, we have flexible terms and
+      attractive interest rates.
+    </p>
+  </article>
+
+  <article>
+    <h3>Auto Loans</h3>
+    <p>
+      Hit the road in your dream car with our affordable auto loans. We offer
+      financing solutions for new and used vehicles with quick approval and
+      convenient repayment options.
+    </p>
+  </article>
+
+  <article>
+    <h3>Personal Loans</h3>
+    <p>
+      Need extra funds for personal expenses or emergencies? Our personal loans
+      provide the financial flexibility you need, with easy application
+      processes and competitive interest rates.
+    </p>
+  </article>
+
+  <article>
+    <h3>Business Loans</h3>
+    <p>
+      Fuel the growth of your business with our tailored business loan
+      solutions. Whether you are a start-up or an established enterprise, we
+      offer financing to support your business goals.
+    </p>
+  </article>
+</section>
+
+{% if user.is_authenticated %}
+<a href="{% url 'core:index' %}">Apply for a Loan</a>
+{% else %}
+<p>
+  Interested in our loan products?
+  <a href="{% url 'core:register' %}">Register now</a> to apply.
+</p>
+{% endif %} {% endblock %}

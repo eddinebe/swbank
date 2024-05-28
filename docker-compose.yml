@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./dbscripts/:/dbscripts/
+    env_file:
+      - env
+
+  app:
+    image: swbank:latest
+    volumes:
+      - .:/app/
+    env_file:
+      - env
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt/live/swbank.lol/fullchain.pem:/etc/nginx/certs/fullchain.pem
+      - /etc/letsencrypt/live/swbank.lol/privkey.pem:/etc/nginx/certs/privkey.pem
+    depends_on:
+      - app
+
+
+volumes:
+  postgres_data:
+

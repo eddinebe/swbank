@@ -1,0 +1,49 @@
+{% extends "partials/base.html" %}
+{% block title %} Dashboard {% endblock %}
+{%block content %}
+<div>
+  <h1>User Profile</h1>
+  <hr />
+
+  <div><strong>First Name:</strong> {{ user.first_name }}</div>
+  <div><strong>Last Name:</strong> {{ user.last_name }}</div>
+  <div><strong>Username:</strong> {{ user.username }}</div>
+  <div><strong>Email:</strong> {{ user.email }}</div>
+
+  <h2>Account Information</h2>
+  <hr />
+  <p>
+    Welcome to your dashboard, {{ user.first_name }}! Here, you can manage your
+    account and access your financial information.
+  </p>
+  <p>
+    If you haven't already, you can
+    <a href="{% url 'core:client_create_account' %}">create a new account</a>.
+  </p>
+
+  <h2>Latest Transfers</h2>
+  <hr />
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transfer in latest_transfers %}
+      <tr>
+        <td>{{ transfer.date }}</td>
+        <td>{{ transfer.amount }}</td>
+        <td>{{ transfer.description }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3">No transfers available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

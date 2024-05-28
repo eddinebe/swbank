@@ -1,0 +1,29 @@
+{% extends "partials/base.html" %}
+{% block title %} Your Accounts {% endblock%}
+{% block content %}
+<h1>Your Accounts</h1>
+<p>Here are your accounts:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for account in accounts %}
+    <tr>
+      <td>{{ account.name }}</td>
+      <td>${{ account.balance }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2">
+        Need to open an account?
+        <a href="{% url 'core:account_create' %}">Create one now</a>.
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
