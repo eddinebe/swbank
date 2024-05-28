@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'swbank',
         'USER': 'admin',
         'PASSWORD': 'admin',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '',
     }
 }
@@ -173,3 +173,5 @@ PASSWORD_HASHERS = [
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
+
+CSRF_TRUSTED_ORIGINS = ['https://143.42.54.171', 'https://swbank.lol', 'https://www.swbank.lol', 'https://127.0.0.1']
