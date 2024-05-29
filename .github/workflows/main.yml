@@ -12,6 +12,11 @@ jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
+      - name: Use Node.js 20 for linting
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -21,6 +26,11 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
+      - name: Use Node.js 20 for testing
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -30,6 +40,11 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
+      - name: Use Node.js 20 for deployment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
       - name: Checkout code
         uses: actions/checkout@v2
 
