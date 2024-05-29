@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from core.models import Account, Customer, Rank, Ledger, Staff
+from core.models import Account, Customer, Ledger, Rank, Staff
 
 admin.site.register(Rank)
 admin.site.register(Ledger)

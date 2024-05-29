@@ -1,24 +1,23 @@
+import requests
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.shortcuts import redirect, render
-import requests
+from rest_framework import status, viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from .forms import (
-    ClientRegistrationForm,
     AccountForm,
+    ClientRegistrationForm,
     ContactForm,
     EditProfileForm,
     KYCForm,
     TransferForm,
 )
 from .models import Account, Customer, Ledger
-from rest_framework import viewsets
 from .serializers import AccountSerializer, CustomerSerializer, LedgerSerializer
-
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 
 # API
