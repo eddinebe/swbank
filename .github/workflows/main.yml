@@ -29,7 +29,13 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y shellcheck
           python -m pip install --upgrade pip
-          pip install pylama djlint pip-audit yamllint
+          pip install pylama autopep8 isort black djlint pip-audit yamllint
+
+      - name: Auto-format code
+        run: |
+          autopep8 --in-place --aggressive --aggressive -r .
+          isort . --profile black
+          black .
 
       - name: Run static analysis
         run: |
