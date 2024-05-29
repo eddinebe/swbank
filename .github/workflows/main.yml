@@ -44,5 +44,5 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          script: script: docker-compose up -d
+          script: docker-compose up -d
 
